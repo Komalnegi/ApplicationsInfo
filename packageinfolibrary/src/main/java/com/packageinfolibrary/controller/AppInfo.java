@@ -22,7 +22,7 @@ public class AppInfo {
     private static AppInfo appInfo;
     List<ApplicationInfo> system_apps;
     List<ApplicationInfo> user_installed_apps = new ArrayList<>();
-    PackageInfo packageInfo;
+    private static int INSTALLED_APPS = 0;
 
     public static AppInfo getAppInfo(Context context) {
         if (appInfo == null) {
@@ -39,26 +39,22 @@ public class AppInfo {
         ArrayList<AppItem> itemList = new ArrayList<>();
 
         PackageManager pm = context.getPackageManager();
-        system_apps = context.getPackageManager().getInstalledApplications(0); // use Flag instead
+        system_apps = context.getPackageManager().getInstalledApplications(INSTALLED_APPS); // use Flag always e.g. INSTALLED_APPS here
 
         for (ApplicationInfo app : system_apps) {
             if (!((app.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0)) { // if you don't want anything to happen in "if"
                 // block then instead of using if-else block use not(!) in if block and correspondingly write code in if block
 
-                // It is a system app
                 user_installed_apps.add(app);
             }
         }
 
-        for (int i = 0; i < user_installed_apps.size(); i++) {  // use foreach loop here
+        for(ApplicationInfo applicationInfo : user_installed_apps){
             AppItem appItem = new AppItem();
-            appItem.setPackageName(user_installed_apps.get(i).packageName.toString());  // use setter getter instead of constructor here(commented part below is using constructor)
-            appItem.setApp_name(context.getPackageManager().getApplicationLabel(user_installed_apps.get(i)).toString());
-            appItem.setApp_icon(context.getPackageManager().getApplicationIcon(user_installed_apps.get(i)));
+            appItem.setPackageName(applicationInfo.packageName.toString());  // use setter getter instead of constructor here(commented part below is using constructor)
+            appItem.setApp_name(context.getPackageManager().getApplicationLabel(applicationInfo).toString());
+            appItem.setApp_icon(context.getPackageManager().getApplicationIcon(applicationInfo));
             itemList.add(appItem);
-            /*itemList.add(new AppItem(user_installed_apps.get(i).packageName.toString(),
-                    context.getPackageManager().getApplicationLabel(user_installed_apps.get(i)).toString(),
-                    context.getPackageManager().getApplicationIcon(user_installed_apps.get(i)))); */ // ""getApplicationIcon" not valid for every application
         }
 
         return itemList;
