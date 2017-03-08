@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 
 import com.packageinfolibrary.model.AppItem;
 
@@ -41,18 +42,23 @@ public class AppInfo {
         system_apps = context.getPackageManager().getInstalledApplications(0); // use Flag instead
 
         for (ApplicationInfo app : system_apps) {
-            if (!((app.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0)) {
+            if (!((app.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0)) { // if you don't want anything to happen in "if"
+                // block then instead of using if-else block use not(!) in if block and correspondingly write code in if block
+
                 // It is a system app
                 user_installed_apps.add(app);
             }
         }
 
-        for (int i = 0; i < user_installed_apps.size(); i++) {  // use foreach loop
+        for (int i = 0; i < user_installed_apps.size(); i++) {  // use foreach loop here
             AppItem appItem = new AppItem();
-            appItem.setPackageName(user_installed_apps.get(i).packageName.toString());
-            itemList.add(new AppItem(user_installed_apps.get(i).packageName.toString(),
+            appItem.setPackageName(user_installed_apps.get(i).packageName.toString());  // use setter getter instead of constructor here(commented part below is using constructor)
+            appItem.setApp_name(context.getPackageManager().getApplicationLabel(user_installed_apps.get(i)).toString());
+            appItem.setApp_icon(context.getPackageManager().getApplicationIcon(user_installed_apps.get(i)));
+            itemList.add(appItem);
+            /*itemList.add(new AppItem(user_installed_apps.get(i).packageName.toString(),
                     context.getPackageManager().getApplicationLabel(user_installed_apps.get(i)).toString(),
-                    context.getPackageManager().getApplicationIcon(user_installed_apps.get(i))));  // ""getApplicationIcon" not valid fopr every application
+                    context.getPackageManager().getApplicationIcon(user_installed_apps.get(i)))); */ // ""getApplicationIcon" not valid for every application
         }
 
         return itemList;
@@ -64,14 +70,13 @@ public class AppInfo {
         try {
             PackageInfo pi = context.getPackageManager().getPackageInfo(
                     packageName, PackageManager.GET_ACTIVITIES);
-            /*for(int i=0 ; i<pi.activities.length;i++){
+            /*for(int i=0 ; i<pi.activities.length;i++){   //use foreach loop instead
                 activityList.add(Arrays.asList(pi.activities).get(i).name);
             }*/
 
             for(ActivityInfo appInfo: pi.activities ){
                 activityList.add(appInfo.name);
             }
-
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -81,20 +86,21 @@ public class AppInfo {
         }
     }
 
-    public ArrayList<String> getServices(String PackageName) {
-        ArrayList<String> activityList = new ArrayList<>();
+    public ArrayList<String> getServices(String packageName) {
+        ArrayList<String> serviceList = new ArrayList<>();
         try {
             PackageInfo pi = context.getPackageManager().getPackageInfo(
-                    PackageName, PackageManager.GET_ACTIVITIES);
-            for(int i=0 ; i<pi.activities.length;i++){
-                activityList.add(Arrays.asList(pi.services).get(i).name);
-            }
+                    packageName, PackageManager.GET_SERVICES);
 
-            return activityList;
+            for(ServiceInfo serviceInfo: pi.services ){
+                serviceList.add(serviceInfo.name);
+            }
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            return null;
+
+        }finally {
+            return serviceList;
         }
     }
 }
