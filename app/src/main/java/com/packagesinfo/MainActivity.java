@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         appInfo = AppInfo.getAppInfo(MainActivity.this);
 
-        Log.v("activities_name",appInfo.getActivities("com.facebook.katana").toString());
+        Log.v("application_icon",appInfo.getIcon("com.facebook.katana").toString());
         final ArrayList<AppItem> appItems = appInfo.getAllApps();
 
         mAdapter = new AppAdapter(appItems);

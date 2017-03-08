@@ -6,7 +6,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.graphics.drawable.Drawable;
 
+import com.packageinfolibrary.R;
 import com.packageinfolibrary.model.AppItem;
 
 import java.util.ArrayList;
@@ -97,6 +99,18 @@ public class AppInfo {
 
         }finally {
             return serviceList;
+        }
+    }
+
+    public Drawable getIcon(String packageName) {
+        Drawable drawable = context.getResources().getDrawable( R.drawable.loading_icon );;
+        try {
+            drawable = context.getPackageManager().getApplicationIcon(packageName);
+        }
+        catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }finally {
+            return drawable;
         }
     }
 }
